@@ -110,7 +110,7 @@ const LeftBar = () => {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <div className="w-10 h-10 relative rounded-full overflow-hidden">
-            <ImageComponent src="/general/avatar.png" alt="lama dev" width={40} height={40} enhanced  />
+            <ImageComponent src="general/avatar.png" alt="lama dev" width={40} height={40} tr={true} />
           </div>
           <div className="hidden xxl:flex flex-col">
             <span className="font-bold">Lama Dev</span>
