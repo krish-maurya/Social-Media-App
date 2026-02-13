@@ -5,6 +5,7 @@ import PostInteraction from "./PostInteraction";
 import { rejects } from "assert";
 import { imagekit } from "@/Utils";
 import VideoComponent from "./VideoComponent";
+import Link from "next/link";
 
 interface FileDetailsResponse {
     width: number,
@@ -17,16 +18,14 @@ interface FileDetailsResponse {
     }
 }
 
-const Post = async () => {
+const Post = async ({ type }: { type?: "status" | "comment" }) => {
 
     const getFileDetails = async (fileId: string): Promise<FileDetailsResponse> => {
         return new Promise((resolve, reject) => {
             imagekit.getFileDetails(fileId, (err, result) => {
                 if (err) {
-                    console.error("Error getting file details:", err);
                     reject(err);
                 } else {
-                    console.log("File details:", result);
                     resolve(result as FileDetailsResponse);
                 }
             });
@@ -34,7 +33,7 @@ const Post = async () => {
     };
 
     const fileDetails = await getFileDetails("698d93775c7cd75eb8ea8313");
-    console.log(fileDetails)
+    // console.log(fileDetails)
     return (
         <div className="p-4 border-y-[1px] border-borderGray">
             {/* POST TYPE */}
@@ -48,24 +47,33 @@ const Post = async () => {
                 <span>Lama Dev reposted</span>
             </div>
             {/* POST CONTENT */}
-            <div className="flex gap-4">
+            {/* <div className="flex gap-4"> */}
+            <div className={`flex gap-4 ${type === "status" && "flex-col"}`}>
                 {/* AVATAR */}
-                <div className="relative w-10 h-10 rounded-full overflow-hidden">
+                <div className={`${type === "status" && "hidden"} relative w-10 h-10 rounded-full overflow-hidden`}>
                     <ImageComponent src="general/avatar.png" alt="" width={100} height={100} tr={true} />
                 </div>
                 {/* CONTENT */}
                 <div className="flex-1 flex flex-col gap-2">
                     {/* TOP */}
-                    <div className="flex items-center justify-between gap-2">
-                        <div className="flex items-center gap-2 flex-wrap">
-                            <h1 className="text-md font-bold">Lama Dev</h1>
-                            <span className="text-textGray">@lamaWebDev</span>
-                            <span className="text-textGray">1 day ago</span>
-                        </div>
+                    <div className="w-full flex justify-between">
+                        <Link href={`/lamaWebDev`} className="flex gap-4">
+                            <div className={`${type !== "status" && "hidden"} relative w-10 h-10 rounded-full overflow-hidden`}>
+                                <ImageComponent src="general/avatar.png" alt="" width={100} height={100} tr={true} />
+                            </div>
+                            <div className={`flex items-center gap-2 flex-wrap ${type === "status" && "flex-col gap-0 !items-start"} `}>
+                                <h1 className="text-md font-bold">Lama Dev</h1>
+                                <span className={`text-textGray ${type === "status" && "text-sm"} `}>@lamaWebDev</span>
+                                {type !== "status" && (<span className="text-textGray">1 day ago</span>)}
+                            </div>
+                        </Link>
                         <PostInfo />
                     </div>
                     {/* TEXT & MEDIA */}
-                    <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Odio eum dolorem quod possimus nesciunt aut facilis fuga libero tempora, porro reprehenderit tempore mollitia enim, perspiciatis reiciendis! Ex suscipit provident perspiciatis.</p>
+                    <Link href={`/lamaWebDev/status/123`}>
+                    <p className={`${type === "status" && "text-lg"}`}>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Odio eum dolorem quod possimus nesciunt aut facilis fuga libero tempora, porro reprehenderit tempore mollitia enim, perspiciatis reiciendis! Ex suscipit provident perspiciatis.</p>
+                    </Link>
+                    
                     {/* <ImageComponent src="general/post.jpeg" alt="" width={600} height={600} /> */}
                     {fileDetails && fileDetails.fileType === "image" ? (
                         <ImageComponent src={fileDetails.filePath} alt="" width={fileDetails.width} height={fileDetails.height}
@@ -74,6 +82,7 @@ const Post = async () => {
                     ) : (<VideoComponent src={fileDetails.filePath}
                         className={fileDetails.customMetadata?.sensitive ? "blur-lg" : ""} />
                     )}
+                    {type === "status" && (<span className="text-textGray">1 day ago</span>)}
                     <PostInteraction />
                 </div>
             </div>

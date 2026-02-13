@@ -22,7 +22,6 @@ const Share = () => {
       setMedia(file);
     }
   }
-  console.log("Media:", media)
 
   const preViewURL = media ? URL.createObjectURL(media) : null;
   return (
