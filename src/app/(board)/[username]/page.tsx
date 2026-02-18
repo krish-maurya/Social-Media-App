@@ -1,9 +1,42 @@
 import Image from "next/image";
 import Link from "next/link";
-import ImageComponent from "../components/ImageComponent";
-import Feed from "../components/Feed";
+import ImageComponent from "../../components/ImageComponent";
+import Feed from "../../components/Feed";
+import { prisma } from "@/prisma";
+import { promises } from "dns";
+import { notFound } from "next/navigation";
+import { auth } from "@clerk/nextjs/server";
+import { FollowButton } from "@/app/components/FollowButton";
 
-const UserPage = () => {
+const UserPage = async ({ params }: { params: { username: string } }) => {
+
+  const { userId } = await auth();
+
+  const user = await prisma.user.findUnique({
+    where: {
+      username: (await params).username
+    },
+    include: {
+      _count: {
+        select: {
+          followers: true,
+          following: true
+        }
+      },
+      followers: userId
+        ? {
+          where: {
+            followerId: userId,
+          },
+          select: { id: true },
+        }
+        : undefined
+    }
+  })
+
+  console.log(user?.followers)
+  if (!user) return notFound();
+
   return (
     <div className="">
       {/* PROFILE TITLE */}
@@ -11,7 +44,7 @@ const UserPage = () => {
         <Link href="/">
           <Image src="/icons/back.svg" alt="back" width={24} height={24} />
         </Link>
-        <h1 className="font-bold text-lg">Lama Dev</h1>
+        <h1 className="font-bold text-lg">{user.displayName}</h1>
       </div>
 
       {/* INFO */}
@@ -21,7 +54,7 @@ const UserPage = () => {
           {/* COVER */}
           <div className="w-full aspect-[3/1] relative">
             <ImageComponent
-              src="general/cover.jpg"
+              src={user.coverImage || "general/cover.jpg"}
               alt=""
               width={600}
               height={200}
@@ -32,7 +65,7 @@ const UserPage = () => {
           {/* AVATAR */}
           <div className="w-1/5 aspect-square rounded-full overflow-hidden border-4 border-black bg-gray-300 absolute left-4 -translate-y-1/2">
             <ImageComponent
-              src="general/avatar.png"
+              src={user.avatar || "general/avatar.jpg"}
               alt=""
               width={200}
               height={200}
@@ -51,54 +84,52 @@ const UserPage = () => {
           <div className="w-9 h-9 flex items-center justify-center rounded-full border-[1px] border-gray-500 cursor-pointer">
             <Image src="/icons/message.svg" alt="more" width={20} height={20} />
           </div>
-          <button className="py-2 px-4 bg-white text-black font-bold rounded-full">
-            Follow
-          </button>
+          {userId && <FollowButton userId={user.id} isFollowed={!!user.followers.length} />}
         </div>
 
         {/* USER DETAILS */}
         <div className="p-4 flex flex-col gap-2">
           {/* USERNAME & HANDLE */}
           <div className="">
-            <h1 className="text-2xl font-bold">Lama Dev</h1>
-            <span className="text-textGray text-sm">@lamaWebDev</span>
+            <h1 className="text-2xl font-bold">{user.displayName}</h1>
+            <span className="text-textGray text-sm">@{user.username}</span>
           </div>
 
-          <p>Lama Dev Youtube Channel</p>
+          {user.bio && <p>{user.bio}</p>}
 
           {/* JOB & LOCATION & DATE */}
           <div className="flex gap-4 text-textGray text-[15px]">
-            <div className="flex items-center gap-2">
+            {user.location && <div className="flex items-center gap-2">
               <Image
                 src="/icons/userLocation.svg"
                 alt="location"
                 width={20}
                 height={20}
               />
-              <span>USA</span>
-            </div>
+              <span>{user.location}</span>
+            </div>}
 
             <div className="flex items-center gap-2">
               <Image src="/icons/date.svg" alt="date" width={20} height={20} />
-              <span>Joined May 2021</span>
+              <span>Joined {new Date(user.createdAt.toString()).toLocaleDateString("en-us", { month: "long", year: "numeric" })}</span>
             </div>
           </div>
 
           {/* FOLLOWINGS & FOLLOWERS */}
           <div className="flex gap-4">
             <div className="flex items-center gap-2">
-              <span className="font-bold">100</span>
+              <span className="font-bold">{user._count.followers}</span>
               <span className="text-textGray text-[15px]">Followers</span>
             </div>
             <div className="flex items-center gap-2">
-              <span className="font-bold">100</span>
+              <span className="font-bold">{user._count.following}</span>
               <span className="text-textGray text-[15px]">Followings</span>
             </div>
           </div>
         </div>
       </div>
       {/* FEED */}
-      <Feed/>
+      <Feed userProfileId={user?.id} />
     </div>
   );
 };

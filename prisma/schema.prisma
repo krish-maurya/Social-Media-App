@@ -1,0 +1,125 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id          String    @id @default(cuid())
+  username    String    @unique
+  email       String    @unique
+  displayName String?
+  bio         String?
+  avatar      String?
+  coverImage  String?
+  location    String?
+  website     String?
+  job         String?
+  birthDate   DateTime?
+  verified    Boolean?   @default(false)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  // Relations
+  posts     Post[]
+  likes     Like[]
+  bookmarks Bookmark[]
+
+  // Followers/Following relationship
+  followers Follow[] @relation("UserFollowers")
+  following Follow[] @relation("UserFollowing")
+
+}
+
+model Post {
+  id          String   @id @default(cuid())
+  desc        String?  @db.VarChar(255)
+  img         String?
+  video       String?
+  isSensitive Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Author
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Relations
+  likes     Like[]
+  bookmarks Bookmark[]
+
+  rePostId String?
+  rePost   Post?   @relation("RePosts", fields: [rePostId], references: [id], onDelete: Cascade)
+  rePostedBy Post[]  @relation("RePosts")
+
+  // Reply functionality (thread)
+  parentPostId String?
+  parentPost   Post?   @relation("PostReplies", fields: [parentPostId], references: [id], onDelete: Cascade)
+  comments     Post[]  @relation("PostReplies")
+
+  @@index([userId])
+  @@index([parentPostId])
+  @@index([createdAt])
+}
+
+model Like {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+
+  // User who liked
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Post being liked
+  postId String
+  post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, postId]) // A user can only like a post once
+  @@index([userId])
+  @@index([postId])
+}
+
+model Bookmark {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+
+  // User who bookmarked
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Post being bookmarked
+  postId String
+  post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, postId]) // A user can only bookmark a post once
+  @@index([userId])
+  @@index([postId])
+}
+
+model Follow {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+
+  // User who is following
+  followerId String
+  follower   User   @relation("UserFollowing", fields: [followerId], references: [id], onDelete: Cascade)
+
+  // User being followed
+  followingId String
+  following   User   @relation("UserFollowers", fields: [followingId], references: [id], onDelete: Cascade)
+
+  @@unique([followerId, followingId]) // A user can only follow another user once
+  @@index([followerId])
+  @@index([followingId])
+}
+
+

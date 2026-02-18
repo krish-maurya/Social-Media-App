@@ -4,8 +4,8 @@ import Recommendations from "./Recommendations"
 import Search from "./Search"
 
 const RightBar = () => {
-    return (
-         <div className="pt-4 flex flex-col gap-4 sticky top-0 h-max">
+  return (
+    <div className="pt-4 flex flex-col gap-4 sticky top-0 h-max">
       <Search />
       <PopularTags />
       <Recommendations />
@@ -18,7 +18,7 @@ const RightBar = () => {
         <span>© 2025 K Corp.</span>
       </div>
     </div>
-    )
+  )
 }
 
 export default RightBar
