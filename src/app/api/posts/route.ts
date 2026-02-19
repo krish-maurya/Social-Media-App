@@ -32,46 +32,21 @@ export async function GET(request: NextRequest) {
         },
       };
 
+  const postIncludeQuery = {
+    user: { select: { displayName: true, username: true, avatar: true } },
+    likes: { where: { userId }, select: { id: true } },
+    rePostedBy: { where: { userId }, select: { id: true } },
+    bookmarks: { where: { userId }, select: { id: true } },
+    _count: { select: { likes: true, rePostedBy: true, comments: true } },
+  };
+
   const posts = await prisma.post.findMany({
     where: whereCondition,
     include: {
-      user: {
-        select: {
-          displayName: true,
-          username: true,
-          avatar: true,
-        },
-      },
+      ...postIncludeQuery,
       rePost: {
-        include: {
-          user: {
-            select: {
-              displayName: true,
-              username: true,
-              avatar: true,
-            },
-          },
-          _count: {
-            select: {
-              likes: true,
-              rePostedBy: true,
-              comments: true,
-            },
-
-          },
-          likes: { where: { userId: userId }, select: { id: true } },
-          rePostedBy: { where: { userId: userId }, select: { id: true } },
-          bookmarks: { where: { userId: userId }, select: { id: true } },
-
-        },
+        include: postIncludeQuery,
       },
-      likes: { where: { userId: userId }, select: { id: true } },
-      rePostedBy: { where: { userId: userId }, select: { id: true } },
-      bookmarks: { where: { userId: userId }, select: { id: true } },
-      _count: { select: { likes: true, rePostedBy: true, comments: true } },
-    },
-    orderBy: {
-      createdAt: "desc",
     },
     take: LIMIT,
     skip: (page - 1) * LIMIT,

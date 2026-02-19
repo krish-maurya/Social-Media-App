@@ -1,38 +1,37 @@
-import { resolve } from "path";
+import { Post as PostType } from "@/generated/prisma/client";
+import Link from "next/link";
+import { format } from "timeago.js";
 import ImageComponent from "./ImageComponent";
 import PostInfo from "./PostInfo";
 import PostInteraction from "./PostInteraction";
-import { rejects } from "assert";
-import { imagekit } from "@/Utils";
-import VideoComponent from "./VideoComponent";
-import Link from "next/link";
-import { Post as PostType } from "@/generated/prisma/client";
-import { format } from "timeago.js";
 
-
-
-type PostWithDetails = PostType & {
-    user: {
-        username: string;
-        displayName: string | null;
-        avatar: string | null;
-    };
-    rePost?: (PostType & {
-        user: {
-            username: string;
-            displayName: string | null;
-            avatar: string | null;
-        },
-        _count: { likes: number, rePostedBy: number, comments: number },
-        likes: { id: string }[]
-        rePostedBy: { id: string }[]
-        bookmarks: { id: string }[]
-    }) | null;
-    likes: { id: string }[]
-    _count: { likes: number, rePostedBy: number, comments: number }
-    bookmarks: { id: string }[]
-    rePostedBy: { id: string }[]
+type UserSummary = {
+  username: string;
+  displayName: string | null;
+  avatar: string | null;
 };
+
+type Engagement = {
+  _count: {
+    likes: number;
+    rePostedBy: number;
+    comments: number;
+  };
+  likes: { id: string }[];
+  rePostedBy: { id: string }[];
+  bookmarks: { id: string }[];
+};
+
+type RePostWithDetails = PostType &
+  Engagement & {
+    user: UserSummary;
+  };
+
+type PostWithDetails = PostType &
+  Engagement & {
+    user: UserSummary;
+    rePost?: RePostWithDetails | null;
+  };
 
 
 const Post = ({ type, post }: { type?: "status" | "comment", post: PostWithDetails }) => {
@@ -57,7 +56,7 @@ const Post = ({ type, post }: { type?: "status" | "comment", post: PostWithDetai
             {/* <div className="flex gap-4"> */}
             <div className={`flex gap-4 ${type === "status" && "flex-col"}`}>
                 {/* AVATAR */}
-                {originalPost.user.avatar && <div className={`${type === "status" && "hidden"} relative w-10 h-10 rounded-full overflow-hidden`}>
+                {originalPost.user.avatar && <div className={`${type === "status" && "hidden"} relative w-10 h-10 rounded-full -z-10 overflow-hidden`}>
                     <ImageComponent src={originalPost.user.avatar} alt="" width={100} height={100} tr={true} />
                 </div>}
                 {/* CONTENT */}
@@ -66,7 +65,7 @@ const Post = ({ type, post }: { type?: "status" | "comment", post: PostWithDetai
                     <div className="w-full flex justify-between">
                         <Link href={`/${originalPost.user.username}`} className="flex gap-4">
                             <div className={`${type !== "status" && "hidden"} relative w-10 h-10 rounded-full overflow-hidden`}>
-                                <ImageComponent src="general/avatar.png" alt="" width={100} height={100} tr={true} />
+                                <ImageComponent src={originalPost.user.avatar || "general/avatar.png"} alt="" width={100} height={100} tr={true} />
                             </div>
                             <div className={`flex items-center gap-2 flex-wrap ${type === "status" && "flex-col gap-0 !items-start"} `}>
                                 <h1 className="text-md font-bold">{originalPost.user.displayName}</h1>
@@ -84,7 +83,10 @@ const Post = ({ type, post }: { type?: "status" | "comment", post: PostWithDetai
                     {originalPost.img &&
                         <ImageComponent src={originalPost.img} alt="Post image" width={600} height={600} />}
                     {type === "status" && (<span className="text-textGray">1 day ago</span>)}
-                    <PostInteraction count={originalPost._count}
+                    <PostInteraction
+                        username={originalPost.user.username}
+                        postId={originalPost.id}
+                        count={originalPost._count}
                         isLiked={!!originalPost.likes.length}
                         isSaved={!!originalPost.bookmarks.length}
                         isReposted={!!originalPost.rePostedBy.length} />

@@ -15,13 +15,12 @@ export const InfiniteFeed = ({ userProfileId }: { userProfileId?: string }) => {
     const {
         data,
         error,
-        status,
         hasNextPage,
         fetchNextPage,
     } = useInfiniteQuery({
         queryKey: ["posts", userProfileId],
         queryFn: ({ pageParam }) => {
-            const page = pageParam ?? 1; // FIRST page
+            const page = pageParam ?? 1; 
             return fetchPost(page, userProfileId);
         },
         getNextPageParam: (lastPage, pages) =>
@@ -32,7 +31,11 @@ export const InfiniteFeed = ({ userProfileId }: { userProfileId?: string }) => {
 
     console.log(data);
 
-    const allPosts = data?.pages.flatMap((page) => page.posts) ?? [];
+    const allPosts = Array.from(
+    new Map(
+        (data?.pages.flatMap((page) => page.posts) ?? []).map((post) => [post.id, post])
+    ).values()
+);
 
     return (<InfiniteScroll
         dataLength={allPosts.length}

@@ -1,8 +1,9 @@
 "use client";
-import ImageComponent from "./ImageComponent";
-import { useState } from "react";
+import { addPost } from "@/action";
+import { useUser } from "@clerk/nextjs";
 import Image from "next/image";
-import { shareAction } from "@/actions";
+import { useActionState, useEffect, useRef, useState } from "react";
+import ImageComponent from "./ImageComponent";
 import ImageEditor from "./ImageEditor";
 
 const Share = () => {
@@ -23,13 +24,40 @@ const Share = () => {
     }
   }
 
+
   const preViewURL = media ? URL.createObjectURL(media) : null;
+
+  const { user } = useUser();
+
+  const [state, formAction, isPending] = useActionState(addPost, { success: false, error: false })
+  const handleSubmit = async (formData: FormData) => {
+    if (media) {
+      formData.set("file", media); // ensure the actual File object is attached
+    }
+    formData.set("imageType", setting.type);
+    formData.set("isSensitive", String(setting.sensitive));
+    return formAction(formData);
+  }
+
+  const formRef = useRef<HTMLFormElement|null>(null)
+
+  useEffect(() => {
+    if (state.success) {
+      setMedia(null);
+      setSetting({ type: "original", sensitive: false });
+      formRef.current?.reset(); 
+    }
+  }, [state.success]);
   return (
-    <form className="p-4 flex gap-4" action={formData => shareAction(formData, setting)}>
+    <form className="p-4 flex gap-4"
+    ref={formRef}
+      // action={formData => shareAction(formData, setting)}
+      action={handleSubmit}
+    >
       {/* AVATAR */}
       <div className="relative w-10 h-10 rounded-full overflow-hidden">
         <ImageComponent
-          src="general/avatar.png"
+          src={user?.imageUrl || "general/avatar.png"}
           alt=""
           width={100}
           height={100}
@@ -77,10 +105,10 @@ const Share = () => {
               name="file"
               onChange={handleUpload}
               className="hidden"
-              id="file-upload"
+              id="file"
               accept="image/*,video/*"
             />
-            <label htmlFor="file-upload">
+            <label htmlFor="file">
               <Image
                 src="/icons/image.svg"
                 alt=""
@@ -125,9 +153,10 @@ const Share = () => {
               className="cursor-pointer"
             />
           </div>
-          <button className="bg-white text-black font-bold rounded-full py-2 px-4">
-            Post
+          <button disabled={isPending} className="bg-white text-black font-bold rounded-full py-2 px-4 disabled:cursor-not-allowed disabled:bg-slate-200">
+            {isPending ? "Posting" : "Post"}
           </button>
+          {state.error && (<span className="text-red-300 p-4">Somthing Went Wrong!</span>)}
         </div>
       </div>
     </form>

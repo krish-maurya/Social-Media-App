@@ -7,7 +7,7 @@ import { prisma } from '@/prisma'
 import { auth } from '@clerk/nextjs/server'
 import { notFound } from 'next/navigation'
 
-const statusPage = async ({ params }: { params: { username: string, postId: string } }) => {
+const statusPage = async ({ params }: { params: Promise<{ username: string, postId: string }> }) => {
 
   const postId = (await params).postId;
   const { userId } = await auth();
@@ -25,6 +25,7 @@ const statusPage = async ({ params }: { params: { username: string, postId: stri
       bookmarks: { where: { userId: userId }, select: { id: true } },
       _count: { select: { likes: true, rePostedBy: true, comments: true } },
       comments: {
+        orderBy: { createdAt: "desc" },
         include: {
           user: { select: { displayName: true, username: true, avatar: true } },
           likes: { where: { userId: userId }, select: { id: true } },

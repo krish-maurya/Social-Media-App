@@ -3,6 +3,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import ImageComponent from "./ImageComponent";
+import Socket from "./Socket";
+import { Notification } from "./Notification";
 
 const menuList = [
   {
@@ -17,12 +19,12 @@ const menuList = [
     link: "/",
     icon: "explore.svg",
   },
-  {
-    id: 3,
-    name: "Notifications",
-    link: "/",
-    icon: "notification.svg",
-  },
+  // {
+  //   id: 3,
+  //   name: "Notifications",
+  //   link: "/",
+  //   icon: "notification.svg",
+  // },
   {
     id: 4,
     name: "Messages",
@@ -78,20 +80,25 @@ const LeftBar = () => {
         </Link>
         {/* MENU LIST */}
         <div className="flex flex-col gap-4">
-          {menuList.map((item) => (
-            <Link
-              href={item.link}
-              className="p-2 rounded-full hover:bg-[#181818] flex items-center gap-4"
-              key={item.id}
-            >
-              <Image
-                src={`/icons/${item.icon}`}
-                alt={item.name}
-                width={24}
-                height={24}
-              />
-              <span className="hidden xxl:inline">{item.name}</span>
-            </Link>
+          {menuList.map((item, i) => (
+            <div key={item.id || i}>
+              {i === 2 && (
+                <div>
+                  <Notification />
+                </div>)}
+              <Link
+                href={item.link}
+                className="p-2 rounded-full hover:bg-[#181818] flex items-center gap-4"
+              >
+                <Image
+                  src={`/icons/${item.icon}`}
+                  alt={item.name}
+                  width={24}
+                  height={24}
+                />
+                <span className="hidden xxl:inline">{item.name}</span>
+              </Link>
+            </div>
           ))}
         </div>
         {/* BUTTON */}
@@ -108,6 +115,7 @@ const LeftBar = () => {
           Post
         </Link>
       </div>
+      <Socket />
       {/* USER */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">

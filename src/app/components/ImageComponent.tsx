@@ -31,7 +31,7 @@ export default function ImageComponent({
       alt={alt}
       width={width}
       height={height}
-      // @ts-ignore - lqip is supported but types are outdated
+      //  @ts-expect-error - lqip is supported but types are outdated
       lqip={{ active: true, quality: 20 }}
       {...(tr && { transformation: transformations })}
       className={className}

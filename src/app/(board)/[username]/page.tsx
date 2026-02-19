@@ -1,20 +1,21 @@
+import { FollowButton } from "@/app/components/FollowButton";
+import { prisma } from "@/prisma";
+import { auth } from "@clerk/nextjs/server";
 import Image from "next/image";
 import Link from "next/link";
-import ImageComponent from "../../components/ImageComponent";
-import Feed from "../../components/Feed";
-import { prisma } from "@/prisma";
-import { promises } from "dns";
 import { notFound } from "next/navigation";
-import { auth } from "@clerk/nextjs/server";
-import { FollowButton } from "@/app/components/FollowButton";
+import Feed from "../../components/Feed";
+import ImageComponent from "../../components/ImageComponent";
 
-const UserPage = async ({ params }: { params: { username: string } }) => {
+const UserPage = async ({ params }: { params: Promise<{ username: string }> }) => {
 
   const { userId } = await auth();
 
+  const username = (await params).username
+
   const user = await prisma.user.findUnique({
     where: {
-      username: (await params).username
+      username: username
     },
     include: {
       _count: {
