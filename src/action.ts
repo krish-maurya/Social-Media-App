@@ -6,6 +6,7 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { prisma } from "./prisma";
 import { imagekit } from "./Utils";
+import { redirect } from "next/navigation";
 
 export const followUser = async (targetUserId: string) => {
     const { userId } = await auth()
@@ -332,7 +333,7 @@ export const addUser = async (formData: FormData) => {
             },
         });
 
-        return;
+        redirect("/");
     } catch (error) {
         console.log("User Update Error:", error);
         return;

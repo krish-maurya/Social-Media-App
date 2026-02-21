@@ -110,7 +110,9 @@ const OnboardingPage = () => {
                             name="avatarImage"
                             accept="image/*,video/*"
                             className="hidden"
-                            onChange={(e) => handleImageChange(e, setAvatarImage)}
+                            onChange={(e) => {
+                                  e.stopPropagation();
+                                handleImageChange(e, setAvatarImage);}}
                         />
                     </div>
                 </div>
@@ -191,7 +193,9 @@ const OnboardingPage = () => {
 
                     {/* Buttons */}
                     <div className="flex gap-3 pt-2">
-                        <button onClick={() => router.push("/")} className="flex-1 py-2 rounded-lg border border-zinc-700 text-zinc-300 text-sm hover:bg-zinc-800 transition">
+                        <button
+                        type="button"
+                         onClick={() => router.push("/")} className="flex-1 py-2 rounded-lg border border-zinc-700 text-zinc-300 text-sm hover:bg-zinc-800 transition">
                             Skip
                         </button>
                         <button

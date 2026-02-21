@@ -15,7 +15,7 @@ const PopularTags = () => {
             <div className="flex gap-4">
                 <div className="relative w-20 h-20 rounded-xl overflow-hidden">
                     <ImageComponent
-                        src={ "general/avatar.png"}
+                        src={"general/FIFA.jpeg"}
                         alt="event"
                         width={120}
                         height={120}
@@ -25,13 +25,13 @@ const PopularTags = () => {
 
                 <div className="flex-1">
                     <h2 className="font-bold text-textGrayLight">
-                        Nadal v Federer Grand Slam
+                        FIFA Club World Cup 2025 Final
                     </h2>
-                    <span className="text-sm text-textGray">Last Night</span>
+                    <span className="text-sm text-textGray">2 hours ago</span>
                 </div>
             </div>
 
-            {/* TOPICS */}
+            {/* TOPIC 1 */}
             <div className="">
                 <div className="flex items-center justify-between">
                     <span className="text-textGray text-sm">
@@ -39,23 +39,34 @@ const PopularTags = () => {
                     </span>
                     <Image src="/icons/infoMore.svg" alt="info" width={16} height={16} />
                 </div>
-
-                <h2 className="text-textGrayLight font-bold">OpenAI</h2>
-                <span className="text-textGray text-sm">20K posts</span>
+                <h2 className="text-textGrayLight font-bold">Grok3</h2>
+                <span className="text-textGray text-sm">85.4K posts</span>
             </div>
 
-            {/* TOPICS */}
+            {/* TOPIC 2 */}
             <div className="">
                 <div className="flex items-center justify-between">
                     <span className="text-textGray text-sm">
-                        Technology · Trending
+                        Politics · Trending
                     </span>
                     <Image src="/icons/infoMore.svg" alt="info" width={16} height={16} />
                 </div>
-
-                <h2 className="text-textGrayLight font-bold">OpenAI</h2>
-                <span className="text-textGray text-sm">20K posts</span>
+                <h2 className="text-textGrayLight font-bold">G20Summit</h2>
+                <span className="text-textGray text-sm">142K posts</span>
             </div>
+
+            {/* TOPIC 3 */}
+            <div className="">
+                <div className="flex items-center justify-between">
+                    <span className="text-textGray text-sm">
+                        Science · Trending
+                    </span>
+                    <Image src="/icons/infoMore.svg" alt="info" width={16} height={16} />
+                </div>
+                <h2 className="text-textGrayLight font-bold">MarsLanding</h2>
+                <span className="text-textGray text-sm">57.1K posts</span>
+            </div>
+
             <Link href='/' className="text-blue-500">Show more</Link>
 
         </div>

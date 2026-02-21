@@ -5,6 +5,10 @@ import "../globals.css";
 import { prisma } from "@/prisma";
 import { UserProvider } from "@/providers/UserContextProvider";
 
+export const metadata = {
+    title: 'DEVNET',
+}
+
 export default async function BoardLayout({
   children,
   modal,
