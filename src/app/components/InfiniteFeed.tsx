@@ -26,7 +26,9 @@ export const InfiniteFeed = ({ userProfileId }: { userProfileId?: string }) => {
         getNextPageParam: (lastPage) => lastPage.nextPage ?? undefined
     });
 
-    if (error) return "Something went wrong!";
+    if (error) {
+        console.log("Somthing wents wrong!!")
+    };
 
 
 

@@ -140,7 +140,7 @@ export default function SearchBar() {
                 <div
                   key={p.id}
                   className="flex items-center gap-3 px-4 py-3 hover:bg-inputGray cursor-pointer transition-colors duration-150"
-                  onClick={() => router.push(`/${p.user.username}/status/${p.userId}`)}
+                  onClick={() => router.push(`/${p.user.username}/status/${p.id}`)}
                 >
                   {/* Post icon */}
                   <div className="w-9 h-9 rounded-full bg-borderGray flex items-center justify-center shrink-0">
