@@ -36,6 +36,7 @@ type PostWithDetails = PostType &
 
 const Post = ({ type, post }: { type?: "status" | "comment", post: PostWithDetails }) => {
 
+  
     const originalPost = post.rePost || post;
 
     return (
@@ -65,7 +66,7 @@ const Post = ({ type, post }: { type?: "status" | "comment", post: PostWithDetai
                     <div className="w-full flex justify-between">
                         <Link href={`/${originalPost.user.username}`} className="flex gap-4">
                             <div className={`${type !== "status" && "hidden"} relative w-10 h-10 rounded-full overflow-hidden`}>
-                                <ImageComponent src={originalPost.user.avatar || "general/avatar.png"} alt="" width={100} height={100} tr={true} />
+                                <ImageComponent src={originalPost.user.avatar|| "general/avatar.png"} alt="" width={100} height={100} tr={true} />
                             </div>
                             <div className={`flex items-center gap-2 flex-wrap ${type === "status" && "flex-col gap-0 !items-start"} `}>
                                 <h1 className="text-md font-bold">{originalPost.user.displayName}</h1>

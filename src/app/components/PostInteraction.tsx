@@ -3,6 +3,7 @@
 import { likePost, rePost, savePost } from "@/action"
 import { socket } from "@/socket"
 import { useUser } from "@clerk/nextjs"
+import Link from "next/link"
 import { useOptimistic, useState } from "react"
 
 
@@ -106,6 +107,7 @@ const PostInteraction = ({ username, count, isLiked, isReposted, isSaved, postId
         <div className="flex items-center justify-between my-2 gap-4 lg:gap-16 text-textGray">
             <div className=" flex items-center justify-between flex-1">
                 {/* COMMENTS */}
+                <Link href={`/${username}/status/${postId}`}></Link>
                 <div className="flex items-center gap-2 cursor-pointer group">
                     <svg
                         xmlns="http://www.w3.org/2000/svg"

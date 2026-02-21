@@ -9,7 +9,7 @@ export default function AppLayout({
 
 }>) {
     return (
-        <ClerkProvider>
+        <ClerkProvider signUpForceRedirectUrl="/onboarding">
             <QueryProvider>
                 <html lang="en">
                     <body>

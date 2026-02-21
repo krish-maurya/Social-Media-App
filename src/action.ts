@@ -1,6 +1,6 @@
 "use server"
 
-import { auth } from "@clerk/nextjs/server";
+import { auth, clerkClient } from "@clerk/nextjs/server";
 import { UploadResponse } from "@imagekit/next";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
@@ -217,3 +217,124 @@ export const addPost = async (prevState: { success: boolean, error: boolean }, f
         return { success: false, error: true };
     }
 }
+
+export const addUser = async (formData: FormData) => {
+    const { userId } = await auth();
+    if (!userId) return;
+
+    const clerk = await clerkClient();
+    const user = await clerk.users.getUser(userId);
+
+    const primaryEmail = user.emailAddresses.find(
+        (email) => email.id === user.primaryEmailAddressId
+    )?.emailAddress;
+
+    if (!primaryEmail) {
+        throw new Error("Primary email not found");
+    }
+
+    if (!user.username) {
+        throw new Error("username not found");
+    }
+
+    const coverFile = formData.get("coverImage") as File | null;
+    const avatarFile = formData.get("avatarImage") as File | null;
+
+    const displayName = formData.get("displayName");
+    const bio = formData.get("bio");
+    const location = formData.get("location");
+    const job = formData.get("job");
+    const website = formData.get("website");
+    const birthDate = formData.get("birthDate");
+
+    const birthDateValue = birthDate ? new Date(birthDate as string) : undefined;
+
+    // Optional: check if it’s valid
+    if (birthDateValue && isNaN(birthDateValue.getTime())) {
+        throw new Error("Invalid birthDate format. Must be YYYY-MM-DD");
+    }
+
+
+    const UserSchema = z.object({
+        displayName: z.string().min(2),
+        bio: z.string().max(160).optional(),
+        location: z.string().optional(),
+        job: z.string().optional(),
+        website: z.string().optional(),
+        birthDate: z.string().optional(),
+    });
+
+    const validated = UserSchema.safeParse({
+        displayName,
+        bio,
+        location,
+        job,
+        website,
+    });
+
+    if (!validated.success) {
+        console.log(validated.error);
+        return;
+    }
+
+
+    const uploadFile = async (file: File): Promise<string> => {
+        const bytes = await file.arrayBuffer();
+        const buffer = Buffer.from(bytes);
+        const uniqueFileName = `${Date.now()}-${Math.floor(
+            Math.random() * 10000
+        )}-${file.name}`;
+
+        return new Promise((resolve, reject) => {
+            imagekit.upload(
+                {
+                    file: buffer,
+                    fileName: uniqueFileName,
+                    folder: "/general",
+                },
+                (err, result) => {
+                    if (err || !result) reject(err);
+                    else resolve(result.url); // return image URL
+                }
+            );
+        });
+    };
+
+    let coverUrl: string | null = null;
+    let avatarUrl: string | null = null;
+
+    try {
+        if (coverFile && coverFile.size > 0) {
+            coverUrl = await uploadFile(coverFile);
+        }
+
+        if (avatarFile && avatarFile.size > 0) {
+            avatarUrl = await uploadFile(avatarFile);
+        }
+
+
+        await prisma.user.upsert({
+            where: { id: userId },
+            update: {
+                ...validated.data,
+                ...(birthDateValue && { birthDate: birthDateValue }),
+                ...(coverUrl && { coverImage: coverUrl }),
+                ...(avatarUrl && { avatar: avatarUrl }),
+            },
+            create: {
+                id: userId,
+                email: primaryEmail,
+                username: user.username,
+                ...validated.data,
+                ...(birthDateValue && { birthDate: birthDateValue }),
+                coverImage: coverUrl,
+                avatar: avatarUrl,
+            },
+        });
+
+        return;
+    } catch (error) {
+        console.log("User Update Error:", error);
+        return;
+    }
+};

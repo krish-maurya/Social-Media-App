@@ -15,7 +15,7 @@ const RightBar = () => {
         <Link href="/">Cookie Policy</Link>
         <Link href="/">Accessibility</Link>
         <Link href="/">Ads Info</Link>
-        <span>© 2025 K Corp.</span>
+        <span>© 2025 K DEVNET.</span>
       </div>
     </div>
   )

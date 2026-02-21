@@ -5,6 +5,7 @@ import Image from "next/image";
 import { useActionState, useEffect, useRef, useState } from "react";
 import ImageComponent from "./ImageComponent";
 import ImageEditor from "./ImageEditor";
+import { useCurrentUser } from "@/providers/UserContextProvider";
 
 const Share = () => {
   const [media, setMedia] = useState<File | null>(null);
@@ -27,6 +28,7 @@ const Share = () => {
 
   const preViewURL = media ? URL.createObjectURL(media) : null;
 
+  const userData = useCurrentUser();
   const { user } = useUser();
 
   const [state, formAction, isPending] = useActionState(addPost, { success: false, error: false })
@@ -39,25 +41,25 @@ const Share = () => {
     return formAction(formData);
   }
 
-  const formRef = useRef<HTMLFormElement|null>(null)
+  const formRef = useRef<HTMLFormElement | null>(null)
 
   useEffect(() => {
     if (state.success) {
       setMedia(null);
       setSetting({ type: "original", sensitive: false });
-      formRef.current?.reset(); 
+      formRef.current?.reset();
     }
   }, [state.success]);
   return (
     <form className="p-4 flex gap-4"
-    ref={formRef}
+      ref={formRef}
       // action={formData => shareAction(formData, setting)}
       action={handleSubmit}
     >
       {/* AVATAR */}
       <div className="relative w-10 h-10 rounded-full overflow-hidden">
         <ImageComponent
-          src={user?.imageUrl || "general/avatar.png"}
+          src={userData?.avatar || user?.imageUrl || "general/avatar.png"}
           alt=""
           width={100}
           height={100}

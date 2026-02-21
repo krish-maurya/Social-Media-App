@@ -1,11 +1,12 @@
-import Link from "next/link";
-import ImageComponent from "./ImageComponent";
 import { prisma } from "@/prisma";
 import { auth } from "@clerk/nextjs/server";
+import Link from "next/link";
+import ImageComponent from "./ImageComponent";
 
 const Recommendations = async () => {
 
   const { userId } = await auth();
+
 
   if (!userId) return;
 
@@ -39,7 +40,7 @@ const Recommendations = async () => {
           <div className="flex items-center gap-2">
             <div className="relative rounded-full overflow-hidden w-10 h-10">
               <ImageComponent
-                src={person.avatar || "general/avatar.png"}
+                src={person.avatar ||"general/avatar.png"}
                 alt={person.username}
                 width={100}
                 height={100}

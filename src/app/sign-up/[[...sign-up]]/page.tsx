@@ -8,22 +8,19 @@ const SignUpPage = () => {
   return (
     <div className="h-screen flex items-center justify-between p-8">
       <div className="hidden lg:flex w-1/2 items-center justify-center">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="320"
-          height="320"
-          viewBox="0 0 24 24"
-        >
-          <path
-            fill="white"
-            d="M 26.609375 29.023438 L 3.425781 29.023438 L 3.425781 26.707031 L 24.3125 26.707031 L 24.3125 23.242188 L 3.390625 23.242188 L 3.441406 0.015625 L 11.46875 0.015625 L 11.46875 17.117188 L 9.167969 17.117188 L 9.167969 2.335938 L 5.738281 2.335938 L 5.695312 20.925781 L 26.609375 20.925781 L 26.609375 29.023438"
-          />
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="400" height="400">
+          <path fill="#fff"
+            d="M5 50 L45 5 L60 5 L20 50 L60 95 L45 95 Z" />
+          <path fill="#fff"
+            d="M35 50 L75 5 L90 5 L50 50 L90 95 L75 95 Z" />
+
         </svg>
+
       </div>
       <div className="w-full lg:w-1/2 flex flex-col gap-4">
         <h1 className="text-2xl sm:text-4xl md:text-6xl font-bold">Happening now</h1>
         <h1 className="text-2xl">Join today.</h1>
-        <SignUp.Root>
+        <SignUp.Root >
           <SignUp.Step name="start" className='flex flex-col gap-4'>
             <Clerk.Connection name='google' className='bg-white rounded-full p-2 text-black w-72 flex items-center justify-center gap-2 font-bold'>
               <svg width="24" height="24" viewBox="0 0 48 48">
@@ -100,8 +97,8 @@ const SignUpPage = () => {
           </SignUp.Step>
           <SignUp.Step name="continue">
             <Clerk.Field name="username">
-              <Clerk.Input  className="py-2 px-6 rounded-full text-black w-72 placeholder:text-sm"  placeholder="Username"/>
-              <Clerk.FieldError  className="text-red-300 text-sm" />
+              <Clerk.Input className="py-2 px-6 rounded-full text-black w-72 placeholder:text-sm" placeholder="Username" />
+              <Clerk.FieldError className="text-red-300 text-sm" />
             </Clerk.Field>
 
             <SignUp.Action submit className="mt-3 w-72 bg-iconBlue rounded-full p-2 text-white font-bold  text-center">Continue</SignUp.Action>

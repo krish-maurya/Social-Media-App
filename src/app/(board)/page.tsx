@@ -4,16 +4,32 @@ import Link from "next/link"
 
 const Homepage = () => {
   return (
-    <div className=''>
-      <div className="px-4 flex justify-between text-textGray font-bold border-b-[1px] border-borderGray">
-        <Link className="pb-3 flex items-center border-b-4 border-iconBlue" href="/">For you</Link>
-        <Link className="pb-3 flex items-center" href="/">Following</Link>
-        <Link className="pb-3 flex items-center" href="/">React.js</Link>
-        <Link className="pb-3 flex items-center" href="/">Javascript</Link>
-        <Link className="pb-3 flex items-center" href="/">CSS</Link>
+    <div className="flex flex-col">
+      {/* TABS */}
+      <div className="sticky top-0 z-10 bg-black/80 backdrop-blur-md px-4 flex justify-between border-b border-borderGray">
+        <Link
+          href="/"
+          className="flex-1 flex justify-center pb-3 pt-4 font-bold text-white border-b-4 border-iconBlue hover:bg-[#181818] transition"
+        >
+          For you
+        </Link>
+        <Link
+          href="/"
+          className="flex-1 flex justify-center pb-3 pt-4 font-bold text-textGray hover:bg-[#181818] transition"
+        >
+          Following
+        </Link>
       </div>
-      <Share />
-      <Feed />
+
+      {/* SHARE */}
+      <div className="border-b border-borderGray">
+        <Share />
+      </div>
+
+      {/* FEED */}
+      <div className="flex flex-col">
+        <Feed />
+      </div>
     </div>
   )
 }

@@ -3,9 +3,13 @@
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import ImageComponent from "@/app/components/ImageComponent";
+import { useCurrentUser } from "@/providers/UserContextProvider";
+import { useUser } from "@clerk/nextjs";
 
 export default function InterceptedComposePost() {
   const router = useRouter();
+  const userData = useCurrentUser();
+  const {user}= useUser()
 
   const closeModal = () => {
     router.back();
@@ -24,7 +28,7 @@ export default function InterceptedComposePost() {
         <div className="py-8 flex gap-4">
           <div className='relative w-10 h-10 rounded-full overflow-hidden'>
             <ImageComponent
-              src="general/avatar.png"
+              src={userData?.avatar || user?.imageUrl || "general/avatar.png"}
               alt="Lama Dev"
               width={100}
               height={100}

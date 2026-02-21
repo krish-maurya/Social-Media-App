@@ -1,9 +1,10 @@
+import Image from "next/image"
 import Link from "next/link"
 import ImageComponent from "./ImageComponent"
-import Image from "next/image"
 
 
 const PopularTags = () => {
+
     return (
         <div className="p-4 rounded-2xl border-[1px] border-borderGray flex flex-col gap-4">
             <h1 className="text-xl font-bold text-textGrayLight">
@@ -14,7 +15,7 @@ const PopularTags = () => {
             <div className="flex gap-4">
                 <div className="relative w-20 h-20 rounded-xl overflow-hidden">
                     <ImageComponent
-                        src="general/avatar.png"
+                        src={ "general/avatar.png"}
                         alt="event"
                         width={120}
                         height={120}

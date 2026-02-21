@@ -43,6 +43,6 @@ export default function Socket() {
     }, [user]);
 
     return (
-       <span></span>
+       <span className="w-0 h-0"></span>
     );
 }
