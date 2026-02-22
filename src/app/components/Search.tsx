@@ -21,8 +21,16 @@ export default function SearchBar() {
   const [results, setResults] = useState<SearchResults | null>(null);
   const [loading, setLoading] = useState(false);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setResults(null);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    
     if (debounceRef.current) clearTimeout(debounceRef.current);
 
     if (!query.trim() || query.length < 2) {
@@ -42,6 +50,7 @@ export default function SearchBar() {
         setLoading(false);
       }
     }, 300);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [query]);
 
   return (
@@ -94,7 +103,7 @@ export default function SearchBar() {
 
       {/* Dropdown */}
       {results && !loading && (
-        <div className="absolute z-10 mt-2 w-full bg-black border border-borderGray rounded-2xl shadow-lg overflow-hidden">
+        <div ref={menuRef} className="absolute z-10 mt-2 w-full bg-black border border-borderGray rounded-2xl shadow-lg overflow-hidden">
 
           {/* Users Section */}
           {results.users.length > 0 && (
