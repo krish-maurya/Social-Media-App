@@ -17,7 +17,7 @@ const OnboardingPage = () => {
 
     const coverInputRef = useRef<HTMLInputElement>(null);
     const avatarInputRef = useRef<HTMLInputElement>(null);
-    const router = useRouter()
+    const router = useRouter();
 
     const handleImageChange = (
         e: React.ChangeEvent<HTMLInputElement>,
@@ -31,7 +31,28 @@ const OnboardingPage = () => {
     };
 
     return (
-        <form action={addUser} className="min-h-screen bg-gradient-to-b from-black via-zinc-950 to-black flex items-center justify-center px-4 py-8">
+        <form
+            action={addUser}
+            className="min-h-screen bg-gradient-to-b from-black via-zinc-950 to-black flex items-center justify-center px-4 py-8"
+        >
+            {/* Hidden file inputs placed directly inside form to avoid bubbling issues */}
+            <input
+                ref={coverInputRef}
+                type="file"
+                name="coverImage"
+                accept="image/*,video/*"
+                className="hidden"
+                onChange={(e) => handleImageChange(e, setCoverImage)}
+            />
+            <input
+                ref={avatarInputRef}
+                type="file"
+                name="avatarImage"
+                accept="image/*,video/*"
+                className="hidden"
+                onChange={(e) => handleImageChange(e, setAvatarImage)}
+            />
+
             <div className="w-full max-w-2xl bg-zinc-900/60 backdrop-blur-xl border border-zinc-800 rounded-3xl shadow-2xl overflow-hidden">
 
                 {/* Header */}
@@ -70,20 +91,17 @@ const OnboardingPage = () => {
                         </div>
                     </div>
 
-                    <input
-                        ref={coverInputRef}
-                        type="file"
-                        name="coverImage"
-                        accept="image/*,video/*"
-                        className="hidden"
-                        onChange={(e) => handleImageChange(e, setCoverImage)}
-                    />
-
                     {/* Avatar */}
-                    <div className="absolute left-6 -bottom-12">
+                    <div
+                        className="absolute left-6 -bottom-12"
+                        onClick={(e) => e.stopPropagation()} // prevent cover click from firing
+                    >
                         <div
                             className="relative w-24 h-24 cursor-pointer group"
-                            onClick={() => avatarInputRef.current?.click()}
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                avatarInputRef.current?.click();
+                            }}
                         >
                             <div className="w-full h-full rounded-full border-4 border-zinc-900 overflow-hidden bg-zinc-800 shadow-lg">
                                 {avatarImage ? (
@@ -103,17 +121,6 @@ const OnboardingPage = () => {
                                 <Camera className="w-3 h-3 text-black" />
                             </div>
                         </div>
-
-                        <input
-                            ref={avatarInputRef}
-                            type="file"
-                            name="avatarImage"
-                            accept="image/*,video/*"
-                            className="hidden"
-                            onChange={(e) => {
-                                  e.stopPropagation();
-                                handleImageChange(e, setAvatarImage);}}
-                        />
                     </div>
                 </div>
 
@@ -194,8 +201,10 @@ const OnboardingPage = () => {
                     {/* Buttons */}
                     <div className="flex gap-3 pt-2">
                         <button
-                        type="button"
-                         onClick={() => router.push("/")} className="flex-1 py-2 rounded-lg border border-zinc-700 text-zinc-300 text-sm hover:bg-zinc-800 transition">
+                            type="button"
+                            onClick={() => router.push("/")}
+                            className="flex-1 py-2 rounded-lg border border-zinc-700 text-zinc-300 text-sm hover:bg-zinc-800 transition"
+                        >
                             Skip
                         </button>
                         <button
