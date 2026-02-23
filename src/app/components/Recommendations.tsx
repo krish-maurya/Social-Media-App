@@ -2,6 +2,7 @@ import { prisma } from "@/prisma";
 import { auth } from "@clerk/nextjs/server";
 import Link from "next/link";
 import ImageComponent from "./ImageComponent";
+import { FollowButton } from "./FollowButton";
 
 const Recommendations = async () => {
 
@@ -9,6 +10,8 @@ const Recommendations = async () => {
 
 
   if (!userId) return;
+
+
 
   const followingIds = await prisma.follow.findMany({
     where: {
@@ -23,13 +26,24 @@ const Recommendations = async () => {
   const friendsRecommendations = await prisma.user.findMany({
     where: {
       id: { not: userId, notIn: followedUserIDs },
-      followers: { some: { followerId: { in: followedUserIDs } } },
+      followers: {
+        some: { followerId: { in: followedUserIDs } },
+      },
     },
     take: 3,
-    select: { id: true, displayName: true, username: true, avatar: true },
-  })
+    select: {
+      id: true,
+      displayName: true,
+      username: true,
+      avatar: true,
+      followers: {
+        where: { followerId: userId },
+        select: { id: true },
+      },
+    },
+  });
 
-  
+
   return (
     <div className="p-4 rounded-2xl border-[1px] border-borderGray flex flex-col gap-4">
       {friendsRecommendations.map((person) => (
@@ -40,7 +54,7 @@ const Recommendations = async () => {
           <div className="flex items-center gap-2">
             <div className="relative rounded-full overflow-hidden w-10 h-10">
               <ImageComponent
-                src={person.avatar ||"general/avatar.png"}
+                src={person.avatar || "general/avatar.png"}
                 alt={person.username}
                 width={100}
                 height={100}
@@ -59,7 +73,7 @@ const Recommendations = async () => {
           </div>
 
           <button className="py-1 px-4 font-semibold bg-white text-black rounded-full">
-            Follow
+            <FollowButton userId={person.id} isFollowed={person.followers.length > 0} />
           </button>
         </div>
       ))}

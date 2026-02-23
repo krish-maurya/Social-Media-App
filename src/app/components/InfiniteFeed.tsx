@@ -6,7 +6,7 @@ import Post from "./Post";
 
 const fetchPost = async (page: number, userProfileId?: string) => {
     const res = await fetch(
-        `http://localhost:3000/api/posts?page=${page}&user=${userProfileId}`
+        `/api/posts?page=${page}&user=${userProfileId ?? ""}`
     );
     return res.json();
 };

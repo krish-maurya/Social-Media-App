@@ -35,7 +35,6 @@ const UserPage = async ({ params }: { params: Promise<{ username: string }> }) =
     }
   })
 
-  console.log(user?.followers)
   if (!user) return notFound();
 
   return (
