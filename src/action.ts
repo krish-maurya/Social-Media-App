@@ -176,7 +176,9 @@ export const addPost = async (prevState: { success: boolean, error: boolean }, f
     }
 
     const Post = z.object({
-        desc: z.string().max(140),
+        desc: z.string()
+        .min(1, "Description is required")
+        .max(140, "Max 140 characters"),
         isSensitive: z.boolean().optional()
     })
 

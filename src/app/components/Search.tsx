@@ -119,7 +119,7 @@ export default function SearchBar() {
                 >
                   {/* Avatar placeholder */}
                   <div className="w-9 h-9 rounded-full bg-borderGray flex items-center justify-center shrink-0">
-                    <ImageComponent src={u.avatar} width={100} height={100} alt="" tr={true} />
+                    <ImageComponent src={u.avatar || "general/avatar.png"} width={100} height={100} alt="" tr={true} />
                   </div>
                   <div className="flex flex-col min-w-0">
                     <span className="text-sm font-bold text-textGrayLight truncate">
